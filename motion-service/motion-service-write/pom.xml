@@ -10,23 +10,60 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
-	<groupId>de.varsamis</groupId>
 	<artifactId>motion-service-write</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>motion-service-write</name>
 	<description>Spring Boot Project moving Vehicle the write part (cqrs)</description>
 	<packaging>jar</packaging>
-    
-	<properties>
-		<java.version>11</java.version>
-	</properties>
 
+
+	<!-- ===================================== -->
+	<!-- Build und plugins                     -->
+	<!-- ===================================== -->
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<groupId>org.springframework.boot</groupId>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>de/varsamis/motionservice/configuration/*</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<!-- ===================================== -->
+	<!-- Dependencies                          -->
+	<!-- ===================================== -->
 
 	<dependencies>
+
+		<dependency>
+			<artifactId>motion-service-api</artifactId>
+			<groupId>de.varsamis</groupId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+
 	</dependencies>
 
 

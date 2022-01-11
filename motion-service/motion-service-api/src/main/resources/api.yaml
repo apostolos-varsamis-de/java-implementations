@@ -1,0 +1,136 @@
+openapi: 3.0.0
+info:
+  title: motion API
+  description: >-
+    service für Motion Experimentelles Projekt
+  contact:
+    email: apostolos@varsamis.de
+  version: 1.0.0
+paths:
+  /motion/projection3d:
+    post:
+      tags:
+        - projection3d
+      summary: Input von 3d Projektion Daten
+      operationId: setProjection3d
+      description: Empfängt 3D Daten Vektor und distanz
+      requestBody:
+        description: Projektions Info
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/projection3d"
+      responses:
+        200:
+          description: erfolg
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/success"
+        401:
+          description: User ist nicht authentifiziert.
+          headers: { }
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: User ist nicht berechtigt die angeforderte Ressource zu lesen.
+          headers: { }
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: kafka cluster nicht erreichbar
+          headers: { }
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Unerwarteter Fehler
+          headers: { }
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    ErrorType:
+      description: Fehlertyp
+      enum:
+        - TECHNICAL_FAULT
+        - BUSINESS_FAULT
+      type: string
+      example: TECHNICAL_FAULT
+    Layer:
+      description: Ebene auf welcher der Fehler aufgetreten ist
+      enum:
+        - KAFKA
+        - APP
+      type: string
+      example: APP
+    Error:
+      description: Definition einer Fehlerdatenstruktur
+      required:
+        - type
+        - layer
+        - code
+        - occurrence
+        - message
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/ErrorType"
+        layer:
+          $ref: "#/components/schemas/Layer"
+        code:
+          type: string
+          description: Eindeutiger Errorcode, der u.a. Auskunft über die Komponente gibt, die den Fehler verursacht hat
+        occurrence:
+          type: string
+          format: date-time
+          description: Fehlerdatum als Timestamp als ISO 8601 String
+        message:
+          type: string
+          description: Fehlermeldung, die menschenleserlich sein sollte
+        detailMessage:
+          type: string
+          description: Weitere Fehlerdetails für die interne Nutzung (z.B. Stacktrace)
+        traceId:
+          type: string
+          format: uuid
+          description: Interner Trace Identifier, der es erlaubt zugehörige Loginformationen leichter zu identifizieren. Dies ist v.a. im Zusammenhang mit der stark asynchronen Verarbeitungssemantik der Plattform notwendig.
+    projection3d:
+      description: Datenstruktur
+      type: object
+      properties:
+        device:
+          type: string
+          description: device name
+        timestamp:
+          type: long
+          description: timestamp der Information
+        xPos:
+          type: number
+          description: vector xPos
+        yPos:
+          type: number
+          description: vector yPos
+        zPos:
+          type: number
+          description: vector zPos
+        dist:
+          type: number
+          description: vector length
+    success:
+      description: erfolgreicher Datenempfang
+      type: object
+      properties:
+        info:
+          type: string
+          description: info
+tags:
+  - name: motiondata
+    description: Operationen für die Speicherung von Motion Daten

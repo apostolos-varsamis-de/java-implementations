@@ -15,10 +15,12 @@ import static org.mockito.Mockito.doReturn;
 
 import org.mockito.ArgumentCaptor;
 
+import java.math.BigDecimal;
+import java.time.Instant;
 
-public class WriteDataServiceTest {
+public class MotionServiceTest {
 
-    private WriteDataService underTest;
+    private MotionService underTest;
     private KafkaTemplate<String, Projection3dEvent> mockProjection3dEventTemplate;
     private AppConfigurationProperties mockAppConfigurationProperties;
     private ArgumentCaptor<Projection3dEvent> projection3dEventArgumentCaptor;
@@ -31,19 +33,20 @@ public class WriteDataServiceTest {
         mockAppConfigurationProperties = mock(AppConfigurationProperties.class);
         doReturn("test-topic").when(mockAppConfigurationProperties).getProjection3dTopic();
 
-        underTest = new WriteDataService(mockProjection3dEventTemplate, mockAppConfigurationProperties);
+        underTest = new MotionService(mockProjection3dEventTemplate, mockAppConfigurationProperties);
     }
 
 
     @Test
-    void testDeleteTarget() {
+    void testWriteProjection3dData() {
         Projection3dEvent orgEvent = Projection3dEvent
                 .builder()
                 .device("dev1")
-                .x(0.0)
-                .y(0.0)
-                .y(0.0)
-                .dist(10.0)
+                .timestamp(Instant.now().getEpochSecond())
+                .x(BigDecimal.ZERO)
+                .y(BigDecimal.ZERO)
+                .y(BigDecimal.ZERO)
+                .dist(BigDecimal.TEN)
                 .build();
         underTest.writeProjection3d(orgEvent);
         verify(mockProjection3dEventTemplate).send(eq("test-topic"), projection3dEventArgumentCaptor.capture());

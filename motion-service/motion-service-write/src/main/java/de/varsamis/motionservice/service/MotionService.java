@@ -12,7 +12,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class WriteDataService {
+public class MotionService {
 
     @NonNull
     private final KafkaTemplate<String, Projection3dEvent> projection3dEventProducer;
